@@ -7,7 +7,7 @@ CC = clang
 FLAGS = -Wall -Wextra -Werror -pthread -Ofast -Lmini -lX11 -lmlx -Imini -lXext
 
 %.o : %.c fratol.h
-	$(CC) -Wall -Wextra -Werror -pthread -Ofast -Lmini -lX11 -lmlx -Imini -lXext -c $<
+	$(CC) $(FLAGS) -c $<
 
 
 $(NAME) : $(OBJ) $(MLX)
