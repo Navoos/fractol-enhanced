@@ -43,7 +43,7 @@ typedef struct s_all
 void	draw_mandelbrot(t_all *d_all, int zone_x, int zone_y, int max_iteration);
 int close(int key, t_all *arg)
 {
-	mlx_destroy_window(arg->mlx.mlx_ptr, arg->mlx.window_ptr);
+	exit(0);
 	return (0);
 }
 
@@ -118,7 +118,7 @@ int handle_mouse(int code, int x, int y, t_all *data)
 		data->draw.lx *= out; data->draw.rx *= out; data->draw.ly *= out; data->draw.ry *= out;
 		ax = map(x, 0, WIDTH, data->draw.lx, data->draw.rx);
 		ay = map(y, 0, HEIGHT, data->draw.ly, data->draw.ry);
-		data->draw.lx += (ax-bx); data->draw.rx += (ax-bx); data->draw.ly += (ay-by); data->draw.ry += (ay-by);
+		data->draw.lx += (bx-ax); data->draw.rx += (bx-ax); data->draw.ly += (by-ay); data->draw.ry += (by-ay);
 		draw_mandelbrot(data, WIDTH, HEIGHT,  MAX_IT);
 	}
 }
@@ -132,7 +132,7 @@ void	draw_mandelbrot(t_all *d_all, int zone_x, int zone_y, int max_iteration)
 		for (x = 0; x < zone_x; x += 1)
 		{
 			double x0 = map(x, 0, zone_x, d_all->draw.lx, d_all->draw.rx);
-			double y0 = map(y, 0, zone_y, d_all->draw.ry, d_all->draw.ly);
+			double y0 = map(y, 0, zone_y, d_all->draw.ly, d_all->draw.ry);
 			double a = 0.0;
 			double b = 0.0;
 			it = 0;
