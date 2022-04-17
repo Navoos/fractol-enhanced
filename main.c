@@ -40,9 +40,11 @@ typedef struct s_all
 	t_draw		draw;
 
 }	t_all;
-void	draw_mandelbrot(t_all *d_all, int zone_x, int zone_y, int max_iteration);
+void	draw_mandelbrot(t_all *d_all, int sx, int sy, int zone_x, int zone_y, int max_iteration);
 int close(int key, t_all *arg)
 {
+	(void)	key;
+	(void)	arg;
 	exit(0);
 	return (0);
 }
@@ -73,25 +75,25 @@ int	handle_key(int code, t_all *data)
 	{
 		data->draw.lx -= x;
 		data->draw.rx -= x;
-		draw_mandelbrot(data, WIDTH, HEIGHT, MAX_IT);
+		draw_mandelbrot(data, 0,0, WIDTH, HEIGHT, MAX_IT);
 	}
 	if (code == 100)
 	{
 		data->draw.lx += x;
 		data->draw.rx += x;
-		draw_mandelbrot(data, WIDTH, HEIGHT, MAX_IT);
+		draw_mandelbrot(data, 0,0,WIDTH, HEIGHT, MAX_IT);
 	}
 	if (code == 119)
 	{
 		data->draw.ly -= y;
 		data->draw.ry -= y;
-		draw_mandelbrot(data, WIDTH, HEIGHT, MAX_IT);
+		draw_mandelbrot(data, 0,0,WIDTH, HEIGHT, MAX_IT);
 	}
 	if (code == 115)
 	{
 		data->draw.ly += y;
 		data->draw.ry += y;
-		draw_mandelbrot(data, WIDTH, HEIGHT, MAX_IT);
+		draw_mandelbrot(data, 0,0,WIDTH, HEIGHT, MAX_IT);
 	}
 	return (0);
 }
@@ -110,7 +112,7 @@ int handle_mouse(int code, int x, int y, t_all *data)
 		ax = map(x, 0, WIDTH, data->draw.lx, data->draw.rx);
 		ay = map(y, 0, HEIGHT, data->draw.ly, data->draw.ry);
 		data->draw.lx += (bx-ax); data->draw.rx += (bx-ax); data->draw.ly += (by-ay); data->draw.ry += (by-ay);
-		draw_mandelbrot(data, WIDTH, HEIGHT,  MAX_IT);
+		draw_mandelbrot(data, 0,0,WIDTH, HEIGHT,  MAX_IT);
 	}
 	else if (code == 4)
 	{
@@ -121,36 +123,12 @@ int handle_mouse(int code, int x, int y, t_all *data)
 		data->draw.lx += (bx-ax); data->draw.rx += (bx-ax); data->draw.ly += (by-ay); data->draw.ry += (by-ay);
 		draw_mandelbrot(data, WIDTH, HEIGHT,  MAX_IT);
 	}
-}
-void	draw_mandelbrot(t_all *d_all, int zone_x, int zone_y, int max_iteration)
-{
-	int	x;
-	int	y;
-	int	it;
-	for (y = 0; y < zone_y; y += 1)
-	{
-		for (x = 0; x < zone_x; x += 1)
-		{
-			double x0 = map(x, 0, zone_x, d_all->draw.lx, d_all->draw.rx);
-			double y0 = map(y, 0, zone_y, d_all->draw.ly, d_all->draw.ry);
-			double a = 0.0;
-			double b = 0.0;
-			it = 0;
-			while (a * a + b * b <= 4 && it < max_iteration)
-			{
-				double x_temp = a * a - b * b + x0;
-				b = 2 * a * b + y0; 
-				a = x_temp;
-				it += 1;
-			}
-			my_mlx_pixel_put(&d_all->data, x, y, create_trgb(0, it, 0, 0));
-		}
-	}
-	mlx_put_image_to_window(d_all->mlx.mlx_ptr, d_all->mlx.window_ptr, d_all->data.img, 0, 0);
+	return (0);
 }
 
 int	main(int ac, char **av)
 {
+	(void) av;
 	if (ac == 2)
 	{
 		t_all	d_all;
@@ -171,7 +149,7 @@ int	main(int ac, char **av)
 		&d_all.data.line_length, &d_all.data.endian);
 		if (!d_all.data.addr)
 			exit(1);
-		draw_mandelbrot(&d_all, WIDTH, HEIGHT, MAX_IT);
+		draw_mandelbrot(&d_all, 0,0,WIDTH, HEIGHT, MAX_IT);
 		mlx_hook(d_all.mlx.window_ptr, 17, 0x0, close, &d_all);
 		mlx_key_hook(d_all.mlx.window_ptr, handle_key, &d_all);
 		mlx_mouse_hook(d_all.mlx.window_ptr, handle_mouse, &d_all);
@@ -179,4 +157,5 @@ int	main(int ac, char **av)
 	}
 	return (0);
 }
+
 
