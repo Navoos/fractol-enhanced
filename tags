@@ -1,0 +1,37 @@
+$(MLX	Makefile	/^$(MLX):$/
+$(NAME	Makefile	/^$(NAME) : $(OBJ) $(MLX)$/
+%.o	Makefile	/^%.o : %.c fratol.h$/
+CC	Makefile	/^CC = clang$/
+FLAGS	Makefile	/^FLAGS = -Wall -Wextra -Werror -pthread -Ofast -Lmi/
+HEIGHT	main.c	6
+INCL	Makefile	/^INCL = \/usr\/include\/..\/lib$/
+MLX	Makefile	/^MLX = libmlx.a$/
+Mmain	main.c	/^int	main(int ac, char **av)$/
+NAME	Makefile	/^NAME = fractol$/
+OBJ	Makefile	/^OBJ = $(SRC:.c=.o)$/
+SRC	Makefile	/^SRC = $(wildcard *.c)$/
+WIDTH	main.c	5
+addr	main.c	18
+bits_per_pixel	main.c	19
+clean	Makefile	/^clean : $/
+close	main.c	/^int close(int key, t_all *arg)$/
+create_trgb	main.c	/^int	create_trgb(int t, int r, int g, int b)$/
+data	main.c	27
+draw_mandelbrot	main.c	/^void	draw_mandelbrot(t_all *d_all, int zone_x, int/
+endian	main.c	21
+fclean	Makefile	/^fclean : clean$/
+img	main.c	17
+line_length	main.c	20
+map	main.c	/^double map(double x, double in_min, double in_max,/
+mlx	main.c	28
+mlx_ptr	main.c	10
+months	README.md	4
+my_mlx_pixel_put	main.c	/^void	my_mlx_pixel_put(t_data *data, int x, int y, /
+re	Makefile	/^re : fclean $(NAME)$/
+s_all	main.c	25
+s_data	main.c	16
+s_mlx_var	main.c	8
+t_all	main.c	29
+t_data	main.c	22
+t_mlx_var	main.c	12
+window_ptr	main.c	11
