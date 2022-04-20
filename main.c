@@ -1,6 +1,8 @@
 #include <mlx.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+#include <unistd.h>
 #include <math.h>
 #include <immintrin.h>
 #define WIDTH 918
@@ -41,7 +43,7 @@ typedef struct s_all
 
 }	t_all;
 void	draw_mandelbrot(t_all *d_all, int sx, int sy, int zone_x, int zone_y, int max_iteration);
-int close(int key, t_all *arg)
+int ft_close(int key, t_all *arg)
 {
 	(void) key;
 	(void) arg;
@@ -171,6 +173,8 @@ repeat :
 			_a = _mm256_add_pd(_a, _cr);
 			_b = _mm256_mul_pd(_zr, _zi);
 			_b = _mm256_fmadd_pd(_b, _two, _ci);
+			_zr = _a;
+			_zi = _b;
 			_a = _mm256_add_pd(_zr2, _zi2);
 			_mask1 = _mm256_cmp_pd(_a, _four, _CMP_LT_OQ);
 			_mask2 = _mm256_cmpgt_epi64(_iterations, _n);
@@ -179,10 +183,10 @@ repeat :
 			_n = _mm256_add_epi64(_n, _c);
 			if (_mm256_movemask_pd(_mm256_castsi256_pd(_mask2)) > 0)
 				goto repeat;
-			my_mlx_pixel_put(&d_all->data, x, y, (int) _n[0]);
-			my_mlx_pixel_put(&d_all->data, x + 1, y,(int) _n[1] );
-			my_mlx_pixel_put(&d_all->data, x + 2, y, _n[2]);
-			my_mlx_pixel_put(&d_all->data, x + 3, y, _n[3]);
+			my_mlx_pixel_put(&d_all->data, x, y, (int) _n[3]);
+			my_mlx_pixel_put(&d_all->data, x + 1, y,(int) _n[2] );
+			my_mlx_pixel_put(&d_all->data, x + 2, y, (int)_n[1]);
+			my_mlx_pixel_put(&d_all->data, x + 3, y, (int) _n[0]);
 
 
 		}
@@ -214,7 +218,7 @@ int	main(int ac, char **av)
 		if (!d_all.data.addr)
 			exit(1);
 		draw_mandelbrot(&d_all, 0,0,WIDTH, HEIGHT, MAX_IT);
-		mlx_hook(d_all.mlx.window_ptr, 17, 0x0, close, &d_all);
+		mlx_hook(d_all.mlx.window_ptr, 17, 0x0, ft_close, &d_all);
 		mlx_key_hook(d_all.mlx.window_ptr, handle_key, &d_all);
 		mlx_mouse_hook(d_all.mlx.window_ptr, handle_mouse, &d_all);
 		mlx_loop(d_all.mlx.mlx_ptr);
