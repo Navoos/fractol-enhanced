@@ -1,48 +1,4 @@
-#include <mlx.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <math.h>
-#include <immintrin.h>
-#define WIDTH 918
-#define HEIGHT 720
-#define MAX_IT 255
-
-typedef struct s_mlx_var
-{
-	void	*mlx_ptr;
-	void	*window_ptr;
-}	t_mlx_var;
-
-
-
-typedef struct	s_data {
-	void	*img;
-	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
-}				t_data;
-
-
-typedef struct s_draw
-{
-	double	lx;
-	double	rx;
-	double	ly;
-	double	ry;
-}	t_draw;
-
-
-typedef struct s_all
-{
-	t_data		data;
-	t_mlx_var	mlx;
-	t_draw		draw;
-
-}	t_all;
-void	draw_mandelbrot(t_all *d_all, int sx, int sy, int zone_x, int zone_y, int max_iteration);
+#include "fractol.h"
 int ft_close(int key, t_all *arg)
 {
 	(void) key;
@@ -183,8 +139,8 @@ repeat :
 			_n = _mm256_add_epi64(_n, _c);
 			if (_mm256_movemask_pd(_mm256_castsi256_pd(_mask2)) > 0)
 				goto repeat;
-			my_mlx_pixel_put(&d_all->data, x, y, (int) _n[3]);
-			my_mlx_pixel_put(&d_all->data, x + 1, y,(int) _n[2] );
+			my_mlx_pixel_put(&d_all->data, x, y, (int) _n[3] );
+			my_mlx_pixel_put(&d_all->data, x + 1, y,(int) _n[2]);
 			my_mlx_pixel_put(&d_all->data, x + 2, y, (int)_n[1]);
 			my_mlx_pixel_put(&d_all->data, x + 3, y, (int) _n[0]);
 
