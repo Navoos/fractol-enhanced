@@ -1,0 +1,3 @@
+[submodule "vendor/mini"]
+	path = vendor/mini
+	url = https://github.com/42Paris/minilibx-linux
