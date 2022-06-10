@@ -6,9 +6,9 @@ SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 CC = clang
 CFLAGS = -mavx2 -mfma -mavx -pthread -Ofast -I$(INCL)
-LFLAGS = -L$(LIB) -lmlx -lXext -pthread -lX11
+LFLAGS = -L$(LIB) -lmlx -lXext -lX11 -pthread
 CFLAGS = -mavx -mavx2 -mfma -Wall -Wextra -Werror -pthread -Ofast
-LFLAGS =  -Lmini -lX11 -lmlx -Imini -lXext
+LFLAGS =  -Lmini -lX11 -lmlx -Imini -lXext -pthread
 
 %.o : %.c fratol.h
 	$(CC) $(CFLAGS) -c $<

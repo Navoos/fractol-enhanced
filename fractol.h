@@ -5,7 +5,8 @@
 #include <unistd.h>
 #include <math.h>
 #include <immintrin.h>
-#define WIDTH 918
+#include <pthread.h>
+#define WIDTH 920
 #define HEIGHT 720
 #define MAX_IT 255
 

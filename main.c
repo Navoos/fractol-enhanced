@@ -1,10 +1,44 @@
 #include "fractol.h"
+#define TH_N 8
+
+typedef struct s_task
+{
+	void (*draw)(t_all *,int , int, int , int, int);
+	t_all *info;
+	int sx;
+	int sy;
+	int fx;
+	int fy;
+	int max_iteration;
+
+}	t_task;
+
+t_task	Tq[256];
+int task_count = 0;
+pthread_mutex_t	q_mutex;
+pthread_cond_t wait_cond;
+
+void exec_task(t_task *task)
+{
+	task->draw(task->info, task->sx, task->sy, task->fx, task->fy, task->max_iteration);
+	printf("quarter drawn\n");
+}
+
 int ft_close(int key, t_all *arg)
 {
 	(void) key;
 	(void) arg;
 	exit(0);
 	return (0);
+}
+
+void submit_task(t_task task)
+{
+	pthread_mutex_lock(&q_mutex);
+	Tq[task_count] = task;
+	task_count += 1;
+	pthread_mutex_unlock(&q_mutex);
+	pthread_cond_signal(&wait_cond);
 }
 
 
@@ -150,6 +184,27 @@ repeat :
 	mlx_put_image_to_window(d_all->mlx.mlx_ptr, d_all->mlx.window_ptr, d_all->data.img, 0, 0);
 }
 
+void	*start_thread(void *args)
+{
+	(void) args;
+	while (1)
+	{
+		t_task task;
+		pthread_mutex_lock(&q_mutex);
+		while (task_count == 0)
+			pthread_cond_wait(&wait_cond, &q_mutex);
+		task = Tq[0];
+		int	i;
+		for (i = 0;i < task_count - 1;i += 1)
+		{
+				Tq[i] = Tq[i + 1];
+		}
+		task_count -= 1;
+		pthread_mutex_unlock(&q_mutex);
+		exec_task(&task);
+	}
+}
+
 int	main(int ac, char **av)
 {
 	(void) av;
@@ -173,7 +228,43 @@ int	main(int ac, char **av)
 		&d_all.data.line_length, &d_all.data.endian);
 		if (!d_all.data.addr)
 			exit(1);
-		draw_mandelbrot(&d_all, 0,0,WIDTH, HEIGHT, MAX_IT);
+		int	i;
+		pthread_t	th[TH_N];
+		pthread_mutex_init(&q_mutex, 0x0);
+		pthread_cond_init(&wait_cond, 0x0);
+		for (i = 0;i < TH_N;i += 1)
+		{
+			if (pthread_create(&th[i], 0x0, &start_thread, 0x0) != 0)
+				perror("Creation of thread failed!");
+
+		}
+		int sx = 0;
+		int sy = 0;
+		int fx = 230;
+		int fy = 180;
+		for (i = 0;i < 4;i += 1)
+		{
+			t_task t;
+			t.max_iteration = 255;
+			t.sx = sx;
+			t.sy = sy;
+			t.fx = fx;
+			t.fy = fy;
+			t.info = &d_all;
+			t.draw = &draw_mandelbrot;
+			sx += 230;
+			sy += 180;
+			fx += 230;
+			fy += 180;
+			submit_task(t);
+		}
+		for (i = 0;i < TH_N;i += 1)
+		{
+			if (pthread_join(th[i], 0x0) != 0)
+				perror("Joint of thread failed!");
+
+		}
+		//draw_mandelbrot(&d_all, 0,0,WIDTH, HEIGHT, MAX_IT);
 		mlx_hook(d_all.mlx.window_ptr, 17, 0x0, ft_close, &d_all);
 		mlx_key_hook(d_all.mlx.window_ptr, handle_key, &d_all);
 		mlx_mouse_hook(d_all.mlx.window_ptr, handle_mouse, &d_all);
