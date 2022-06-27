@@ -1,5 +1,5 @@
 #include "fractol.h"
-#define TH_N 8
+#define TH_N 4
 
 typedef struct s_task
 {
@@ -240,23 +240,25 @@ int	main(int ac, char **av)
 		}
 		int sx = 0;
 		int sy = 0;
-		int fx = 230;
-		int fy = 180;
-		for (i = 0;i < 4;i += 1)
+		int fx = WIDTH / (TH_N / 2);
+		int fy = HEIGHT / (TH_N / 2);
+		for (i = 0;i < TH_N / 2;i += 1)
 		{
 			t_task t;
 			t.max_iteration = 255;
 			t.sx = sx;
+			printf("sx : %d\n", sx);
 			t.sy = sy;
+			printf("sy : %d\n", sy);
 			t.fx = fx;
+			printf("fx : %d\n", fx);
 			t.fy = fy;
+			printf("fy : %d\n", fy);
 			t.info = &d_all;
 			t.draw = &draw_mandelbrot;
-			sx += 230;
-			sy += 180;
-			fx += 230;
-			fy += 180;
 			submit_task(t);
+			sx += fx;
+			fx += fx;
 		}
 		for (i = 0;i < TH_N;i += 1)
 		{
