@@ -1,13 +1,11 @@
 NAME = fractol
-MLX = libmlx.a
+MLX = vendor/mini/libmlx.a
 INCL = vendor/mini
 LIB = vendor/mini
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 CC = clang
 CFLAGS = -mavx2 -mfma -mavx -pthread -Ofast -I$(INCL)
-LFLAGS = -L$(LIB) -lmlx -lXext -lX11 -pthread
-CFLAGS = -mavx -mavx2 -mfma -Wall -Wextra -Werror -pthread -Ofast
 LFLAGS =  -Lmini -lX11 -lmlx -Imini -lXext -pthread
 
 %.o : %.c fratol.h
@@ -15,7 +13,7 @@ LFLAGS =  -Lmini -lX11 -lmlx -Imini -lXext -pthread
 
 
 $(NAME) : $(OBJ) $(MLX)
-	$(CC) $< $(LFLAGS) -o $@
+	$(CC) $^ $(LFLAGS) -o $@
 
 $(MLX):
 	make -C vendor/mini

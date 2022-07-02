@@ -1,28 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yakhoudr <yakhoudr@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/07/02 23:10:52 by yakhoudr          #+#    #+#             */
+/*   Updated: 2022/07/02 23:10:52 by yakhoudr         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fractol.h"
-#define TH_N 4
-
-typedef struct s_task
-{
-	void (*draw)(t_all *,int , int, int , int, int);
-	t_all *info;
-	int sx;
-	int sy;
-	int fx;
-	int fy;
-	int max_iteration;
-
-}	t_task;
 
 t_task	Tq[256];
 int task_count = 0;
 pthread_mutex_t	q_mutex;
 pthread_cond_t wait_cond;
 
-void exec_task(t_task *task)
-{
-	task->draw(task->info, task->sx, task->sy, task->fx, task->fy, task->max_iteration);
-	printf("quarter drawn\n");
-}
 
 int ft_close(int key, t_all *arg)
 {
@@ -32,14 +26,6 @@ int ft_close(int key, t_all *arg)
 	return (0);
 }
 
-void submit_task(t_task task)
-{
-	pthread_mutex_lock(&q_mutex);
-	Tq[task_count] = task;
-	task_count += 1;
-	pthread_mutex_unlock(&q_mutex);
-	pthread_cond_signal(&wait_cond);
-}
 
 
 double map(double x, double in_min, double in_max, double out_min, double out_max) {
@@ -128,10 +114,10 @@ void	draw_mandelbrot(t_all *d_all,int sx, int sy, int zone_x, int zone_y, int ma
 	_four = _mm256_set1_pd(4.0);
 	_iterations = _mm256_set1_epi64x(max_iteration);
 	_one = _mm256_set1_epi64x(1);
-	for (y = sx; y < zone_y; y += 1)
+	for (y = sy; y < zone_y; y += 1)
 	{
 		_ci = _mm256_set1_pd(map(y, 0, HEIGHT, d_all->draw.ly, d_all->draw.ry));
-		for (x = sy; x < zone_x; x += 4)
+		for (x = sx; x < zone_x; x += 4)
 		{
 			double ex1, ex2, ex3, ex4;
 			ex1 = map(x, 0, WIDTH, d_all->draw.lx, d_all->draw.rx);
@@ -184,26 +170,6 @@ repeat :
 	mlx_put_image_to_window(d_all->mlx.mlx_ptr, d_all->mlx.window_ptr, d_all->data.img, 0, 0);
 }
 
-void	*start_thread(void *args)
-{
-	(void) args;
-	while (1)
-	{
-		t_task task;
-		pthread_mutex_lock(&q_mutex);
-		while (task_count == 0)
-			pthread_cond_wait(&wait_cond, &q_mutex);
-		task = Tq[0];
-		int	i;
-		for (i = 0;i < task_count - 1;i += 1)
-		{
-				Tq[i] = Tq[i + 1];
-		}
-		task_count -= 1;
-		pthread_mutex_unlock(&q_mutex);
-		exec_task(&task);
-	}
-}
 
 int	main(int ac, char **av)
 {
@@ -238,33 +204,24 @@ int	main(int ac, char **av)
 				perror("Creation of thread failed!");
 
 		}
+		int incr = WIDTH / (TH_N / 2);
 		int sx = 0;
 		int sy = 0;
-		int fx = WIDTH / (TH_N / 2);
-		int fy = HEIGHT / (TH_N / 2);
+		int fx = incr;
+		int fy = HEIGHT;
 		for (i = 0;i < TH_N / 2;i += 1)
 		{
 			t_task t;
-			t.max_iteration = 255;
+			t.max_iteration = 1000;
 			t.sx = sx;
-			printf("sx : %d\n", sx);
 			t.sy = sy;
-			printf("sy : %d\n", sy);
 			t.fx = fx;
-			printf("fx : %d\n", fx);
 			t.fy = fy;
-			printf("fy : %d\n", fy);
 			t.info = &d_all;
 			t.draw = &draw_mandelbrot;
 			submit_task(t);
-			sx += fx;
-			fx += fx;
-		}
-		for (i = 0;i < TH_N;i += 1)
-		{
-			if (pthread_join(th[i], 0x0) != 0)
-				perror("Joint of thread failed!");
-
+			sx += incr;
+			fx += incr;
 		}
 		//draw_mandelbrot(&d_all, 0,0,WIDTH, HEIGHT, MAX_IT);
 		mlx_hook(d_all.mlx.window_ptr, 17, 0x0, ft_close, &d_all);

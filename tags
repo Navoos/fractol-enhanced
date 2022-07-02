@@ -1,25 +1,14 @@
 create_trgb	main.c	/^int	create_trgb(int t, int r, int g, int b)$/
-draw	main.c	/^	void (*draw)(t_all *,int , int, int , int, int);$/
+draw	fractol.h	/^	void (*draw)(t_all *,int , int, int , int, int);$/
 draw_mandelbrot	main.c	/^void	draw_mandelbrot(t_all *d_all,int sx, int sy, /
-exec_task	main.c	/^void exec_task(t_task *task)$/
 ft_close	main.c	/^int ft_close(int key, t_all *arg)$/
-fx	main.c	10
-fy	main.c	11
 handle_key	main.c	/^int	handle_key(int code, t_all *data)$/
 handle_mouse	main.c	/^int handle_mouse(int code, int x, int y, t_all *da/
-info	main.c	7
 map	main.c	/^double map(double x, double in_min, double in_max,/
-max_iteration	main.c	12
 Mmain	main.c	/^int	main(int ac, char **av)$/
 my_mlx_pixel_put	main.c	/^void	my_mlx_pixel_put(t_data *data, int x, int y, /
-q_mutex	main.c	18
-start_thread	main.c	/^void	*start_thread(void *args)$/
-s_task	main.c	4
-submit_task	main.c	/^void submit_task(t_task task)$/
-sx	main.c	8
-sy	main.c	9
-task_count	main.c	17
-TH_N	main.c	2
-Tq	main.c	16
-t_task	main.c	14
-wait_cond	main.c	19
+q_mutex	main.c	17
+start_thread	task.c	/^void	*start_thread(void *args)$/
+task_count	main.c	16
+Tq	main.c	15
+wait_cond	main.c	18
