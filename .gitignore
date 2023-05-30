@@ -2,4 +2,6 @@ tags
 fractol
 a.out
 *.o
+compile_commands.json
+.cache/
 
